@@ -67,7 +67,7 @@ class HubberOffersDownload extends Command
 
         // Check if file has been updated
         if ($timestampFromExportFile === (string) $lastModifiedTimestamp) {
-            $this->warn("File has not been updated since {$kievTimeCarbon}");
+            $this->warn("Hubber`s export file has not been updated since {$kievTimeCarbon}");
             $this->warn("TZ: {$kievTimeCarbon->tzName}; TimeStamp: {$lastModifiedTimestamp}");
             $this->warn('Nothing to download. Exiting...');
             return 0;
