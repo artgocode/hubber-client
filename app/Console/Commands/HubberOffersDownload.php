@@ -45,10 +45,11 @@ class HubberOffersDownload extends Command
         // Get head from hubber
         try {
             $headResponse = Http::head($hubberUrl);
-            $this->info('Connected to Hubber successfully');
+            $this->info('Hubber`s xml updates endpoint head returned success.');
         } catch (\Throwable $th) {
-            $this->error('An error occurred while connecting to Hubber');
+            $this->error('An error occurred while getting Hubber`s xml updates endpoint head:');
             $this->error($th->getMessage());
+            $this->error("Request url: {$hubberUrl}");
             return 1;
         }
 
@@ -71,11 +72,11 @@ class HubberOffersDownload extends Command
         if ($timestampFromExportFile === (string) $lastModifiedTimestamp) {
             $this->warn("File has not been updated since {$kievTimeCarbon}");
             $this->warn("TZ: {$kievTimeCarbon->tzName}; TimeStamp: {$lastModifiedTimestamp}");
-            $this->warn('Nothing to download');
+            $this->warn('Nothing to download. Exiting...');
             return 1;
         } else {
             $this->info('Updates are available');
-            $this->info('Connecting to Hubber...');
+            $this->info('Getting updates xml file from Hubber...');
         }
 
         // Get file
