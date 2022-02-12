@@ -41,6 +41,7 @@ class HubberOffersDownload extends Command
     public function handle()
     {
         $hubberUrl = env('HUBBER_EXPORTER_URL');
+        $exportsStoragePath = config('hubber.export_xml_files_folder');
 
         // Get head from hubber
         try {
@@ -59,14 +60,10 @@ class HubberOffersDownload extends Command
         $kievTimeCarbon = Carbon::createFromTimeString($lastModifiedHeader)->setTimezone('Europe/Kiev');
         $lastModifiedTimestamp = $kievTimeCarbon->timestamp;
 
-        // Get latest export file if there are some
-        if ($lastExportFile = collect(Storage::files('exports'))->sort()->last(null, '')) {
-            // Grab timestamp from file ...
-            $timestampFromExportFile = str($lastExportFile)->between('export_', '.xml')->value();
-        } else {
-            // ... or set timestamp to empty string
-            $timestampFromExportFile = '';
-        }
+        // Get latest export file if there are some or get empty collection
+        $lastExportFile = collect(Storage::files($exportsStoragePath))->sort()->last(null, '');
+        // Grab timestamp from file ...
+        $timestampFromExportFile = str($lastExportFile)->between('export_', '.xml')->value();
 
         // Check if file has been updated
         if ($timestampFromExportFile === (string) $lastModifiedTimestamp) {
@@ -90,9 +87,8 @@ class HubberOffersDownload extends Command
         }
 
         // Compose a new file name
-        $storagePath = 'exports';
-        $newFileName = 'export' . '_' . $lastModifiedTimestamp . '.xml';
-        $filePath = "{$storagePath}/{$newFileName}";
+        $newFileName = 'export_' . $lastModifiedTimestamp . '.xml';
+        $filePath = "{$exportsStoragePath}/{$newFileName}";
 
         // Save file to storage
         try {

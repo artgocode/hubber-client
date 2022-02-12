@@ -39,11 +39,13 @@ class HubberExportsCompareLatest extends Command
      */
     public function handle()
     {
+        $exportsStoragePath = config('hubber.export_xml_files_folder');
 
         // Check for files to compare
-        $exportFiles = collect(Storage::files('exports'));
-        if($exportFiles->count() < 2) {
-            $this->line('There are no files to compare. Exiting ...');
+        $exportFiles = collect(Storage::files($exportsStoragePath));
+        if($filesCount = $exportFiles->count() < 2) {
+            $this->warn("Files count an export folder: {$filesCount}");
+            $this->error('At least two files need to be provided. Exiting ...');
             return 0;
         }
 
