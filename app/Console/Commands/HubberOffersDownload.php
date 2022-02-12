@@ -70,7 +70,7 @@ class HubberOffersDownload extends Command
             $this->warn("File has not been updated since {$kievTimeCarbon}");
             $this->warn("TZ: {$kievTimeCarbon->tzName}; TimeStamp: {$lastModifiedTimestamp}");
             $this->warn('Nothing to download. Exiting...');
-            return 1;
+            return 0;
         } else {
             $this->info('Updates are available');
             $this->info('Getting updates xml file from Hubber...');
