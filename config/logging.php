@@ -114,6 +114,12 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'hubber' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/hubber.log'),
+            'level' => 'debug',
+        ]
     ],
 
 ];

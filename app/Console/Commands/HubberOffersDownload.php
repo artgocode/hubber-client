@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class HubberOffersDownload extends Command
@@ -46,11 +47,19 @@ class HubberOffersDownload extends Command
         // Get head from hubber
         try {
             $headResponse = Http::head($hubberUrl);
-            $this->info('Hubber`s xml updates endpoint head returned success.');
+
+            $headResponseSuccessMessage = 'Hubber`s xml updates endpoint head returned success.';
+            $this->info($headResponseSuccessMessage);
+
+            Log::info($headResponseSuccessMessage, ['last-modified' => $headResponse->header('last-modified')]);
         } catch (\Throwable $th) {
-            $this->error('An error occurred while getting Hubber`s xml updates endpoint head:');
+            $errorDescription = 'An error occurred while requesting Hubber`s xml updates endpoint head';
+            $this->error("{$errorDescription}:");
             $this->error($th->getMessage());
-            $this->error("Request url: {$hubberUrl}");
+
+            Log::channel('hubber')->error("{$errorDescription}: {$th->getMessage()}");
+            Log::channel('hubber')->error($th->getTraceAsString());
+
             return 1;
         }
 
@@ -70,6 +79,7 @@ class HubberOffersDownload extends Command
             $this->warn("Hubber`s export file has not been updated since {$kievTimeCarbon}");
             $this->warn("TZ: {$kievTimeCarbon->tzName}; TimeStamp: {$lastModifiedTimestamp}");
             $this->warn('Nothing to download. Exiting...');
+
             return 0;
         } else {
             $this->info('Updates are available');
@@ -81,8 +91,13 @@ class HubberOffersDownload extends Command
             $response = Http::get($hubberUrl);
             $this->info('Connected to Hubber successfully');
         } catch (\Throwable $th) {
-            $this->error('An error occurred while connecting to Hubber');
+            $errorDescription = 'An error occurred while requesting Hubber`s xml updates file';
+            $this->error("{$errorDescription}:");
             $this->error($th->getMessage());
+
+            Log::channel('hubber')->error("{$errorDescription}: {$th->getMessage()}");
+            Log::channel('hubber')->error($th->getTraceAsString());
+
             return 1;
         }
 
@@ -95,8 +110,9 @@ class HubberOffersDownload extends Command
             Storage::disk('local')->put($filePath, $response);
             $this->info('File "' . $newFileName . '" has been saved successfully');
         } catch (\Throwable $th) {
-            $this->error('An error occurred while saving file content to the storage');
+            $this->error('An error occurred while saving updates file to the storage');
             $this->error($th->getMessage());
+
             return 1;
         }
 
