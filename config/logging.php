@@ -116,9 +116,10 @@ return [
         ],
 
         'hubber' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/hubber.log'),
             'level' => 'debug',
+            'days' => 9
         ]
     ],
 
