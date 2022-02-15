@@ -108,10 +108,18 @@ class HubberOffersDownload extends Command
         // Save file to storage
         try {
             Storage::disk('local')->put($filePath, $response);
-            $this->info('File "' . $newFileName . '" has been saved successfully');
+
+            $fileSavedSuccessMessage = sprintf('File "%s" has been saved successfully', $newFileName);
+            $this->info($fileSavedSuccessMessage);
+
+            Log::info($fileSavedSuccessMessage);
         } catch (\Throwable $th) {
-            $this->error('An error occurred while saving updates file to the storage');
+            $errorDescription = 'An error occurred while saving Hubber`s offers file to the storage';
+            $this->error($errorDescription);
             $this->error($th->getMessage());
+
+            Log::channel('hubber')->error("{$errorDescription}: {$th->getMessage()}");
+            Log::channel('hubber')->error($th->getTraceAsString());
 
             return 1;
         }
