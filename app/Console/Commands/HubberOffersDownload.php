@@ -51,7 +51,7 @@ class HubberOffersDownload extends Command
             $headResponseSuccessMessage = 'Hubber`s xml updates endpoint head returned success.';
             $this->info($headResponseSuccessMessage);
 
-            Log::info($headResponseSuccessMessage, ['last-modified' => $headResponse->header('last-modified')]);
+            Log::channel('hubber')->info($headResponseSuccessMessage, ['last-modified' => $headResponse->header('last-modified')]);
         } catch (\Throwable $th) {
             $errorDescription = 'An error occurred while requesting Hubber`s xml updates endpoint head';
             $this->error("{$errorDescription}:");
@@ -112,7 +112,7 @@ class HubberOffersDownload extends Command
             $fileSavedSuccessMessage = sprintf('File "%s" has been saved successfully', $newFileName);
             $this->info($fileSavedSuccessMessage);
 
-            Log::info($fileSavedSuccessMessage);
+            Log::channel('hubber')->info($fileSavedSuccessMessage);
         } catch (\Throwable $th) {
             $errorDescription = 'An error occurred while saving Hubber`s offers file to the storage';
             $this->error($errorDescription);
