@@ -41,7 +41,7 @@ class HubberOffersDownload extends Command
      */
     public function handle()
     {
-        $hubberUrl = env('HUBBER_EXPORTER_URL');
+        $hubberUrl = config('hubber.offers_url');
         $exportsStoragePath = config('hubber.export_xml_files_folder');
 
         // Get head from hubber
